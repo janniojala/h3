@@ -12,26 +12,26 @@ m/2016/publish-your-project-with-github
 
 Ensiksi täytyi luoda GitHubin sivuille käyttäjätunnus, johon luodaan uusi kansio jonka pystyy kloonaamaan Ubuntuun ja Ubuntusta verkkoon luotuun kansioon. Kun käyttäjätunnus on luotu loin uuden kansion, annoin sen nimeksi h3, laitoin sen publiciksi, annoin pienen selityksen ja lisäsin GNU General Public License v3.0.
 Asensin tämän jälkeen git ohjelman Ubuntulle komennoilla:
-	sudo apt-get update
-	sudo apt-get -y install git
+    sudo apt-get update
+    sudo apt-get -y install git
 
 Ohjelman asennuksen jälkeen kerroin git oman nimeni ja sähköposti osoitteeni komennoilla:
-	git config --global user.email janni.ojala@hotmail.fi
-	git config --global user.name "Janni Ojala"
+    git config --global user.email janni.ojala@hotmail.fi
+    git config --global user.name "Janni Ojala"
 
 Jotta git muistaisi salasanasi yhden tunnin, voidaan tämä tehdä komennolla:
-	git config --global credential.helper "cache --timeout=3600"
+    git config --global credential.helper "cache --timeout=3600"
 
 Tämän jälkeen menin takaisin githubin sivuille ja menin luomaani kansioon ja sieltä valitsin kohdan clone or download. Otin sieltä kansion URL-osoitteen ja se oli 
 Sitten Ubuntun terminalissa täytyi lisätä kyseinen clone ja se lisätään komennolla:
-	git clone https://github.com/janniojala/h3.git
+    git clone https://github.com/janniojala/h3.git
 Clonattuun kansioon pääsee komennoilla:
-	cd h3/
+    cd h3/
 
 Kun kansioon on tehty muutoksia, se pitää ottaa voimaan komennoilla:
-	git add. && git commit
+    git add. && git commit
 Tämän jälkeen halusin päivittää muutokset verkossa sijaitsevalle github kansioon ja ne tehdään komennoilla:
-	git pull && git push
+    git pull && git push
 
 ##b) Näytä omalla git-varastollasi esimerkit komennoista ‘git log’, ‘git diff’ ja ‘git blame’. Selitä tulokset.
 
@@ -73,7 +73,7 @@ index 42bcec3..374b631 100644
 +    Add file
 
 Viimeisenä oli vuorossa git blame. Git blame selvittää tiedostossa, kuka on tehnyt muutoksia. Itse käytin Git blameä tähän tiedostoon komennolla:
-- git blame harjoitus3.md 
+    git blame harjoitus3.md 
 Ja vastaus oli tämä:
 
 0237ebf0 (Janni Ojala       2020-04-19 13:48:06 +0300  1) #Tehtävä 3 / janniojala
@@ -89,9 +89,116 @@ Ja vastaus oli tämä:
 0237ebf0 (Janni Ojala       2020-04-19 13:48:06 +0300 11) m/2016/publish-your-project-with-github
 :
 
-Siinä näkyym että minä olen tehnyt tiedostoon muutoksia noihin aikoihin.
+Siinä näkyy, että minä olen tehnyt tiedostoon muutoksia noihin aikoihin.
 
 ##c)Tee tyhmä muutos gittiin, älä tee commit:tia. Tuhoa huonot muutokset ‘git reset –hard’. Huomaa, että tässä toiminnossa ei ole peruutusnappia.
 
+Ennen tyhmän muutoksen tekemistä päivitin tekemäni vanhat muutokset komennolla:
+    git add . && git commit; git pull && git push
+Tämän jälkeen tein tyhmän muutokset komennolla:
+    git config  --global user.name "Tyhma"
+Tämän jälkeen tein tein komennon git add ., jotta muutos lisättäisiin. Jätin kuitenkin git commitin tekemättä. 
+Kun tyhmä muutos oli lisätty, oli aika resetoida edelliseen commit -tilaan komennolla:
+    git reset --hard
+Komennosta tuli tälläinen tulos, joka kertoi että on palattu edelliseen commit -tilanteeseen:
+HEAD is now at dd338c6 Add files
 
+##d) Tee uusi salt-moduli. Voit asentaa ja konfiguroida minkä vain uuden ohjelman: demonin, työpöytäohjelman tai komentokehotteesta toimivan ohjelman.
 
+Valitsin asennettavaksi ohjelmaksi neofetch, joka tekee sys-tiedostoja ja siitä voi seurata niiden tietoja.
+Asensin ohjelman ensiksi käsin komennoilla:
+    sudo apt-get update
+    sudo apt-get install neofetch
+
+Tämän jälkeen menin polkuun /etc/neofetch ja muokkasin siellä ollutta config.conf tiedostoa.
+Muokkasin config.conf tiedostosta kohtaa #info "GPU Driver" gpu_driver  # Linux/macOS only ja otin siitä # pois
+, jotta kyseinen sääntö tuli voimaan. 
+
+Kun tämä oli tehty kopioin sen /srv/salt kansiooni komennolla:
+    sudo cp /etc/neofetch/config.conf /srv/salt
+
+Sitten poistin ohjelman komennolla:
+    sudo apt-get purge neofetch
+
+Kun ohjelma poistettu. Menin /srv/salt polkuu ja loin neofetch.sls -tilan ja muokkasin sen tämän näköiseksi:
+
+neofetch:
+  pkg.installed
+
+/etc/neofetch/config.conf:
+  file.managed:
+    - source: salt://config.conf  
+
+neofetchservice:
+  service.running:
+    - name: neofetch
+    - watch:
+      - file: /etc/neofetch/config.conf 
+
+Tallensin tilan ja testasin sen läpi menevyyttä komennolla:
+    sudo salt '*' state.apply neofetch
+
+Kaikki muut toiminnot menivät läpi, mutta service.running ei. En saanut sitä toimimaan. Yritin etsiä -tilasta
+kirjoitusvirheitä ja saada sitä toimimaan. Testasin myös, että toimivatko vanhat tilani edelleen. Apache toimi
+normaalisti. Asensin neofetchin vielä käsin toiselle virtuaalikoneelle, jossa sitä ei ole ollut ja testasin
+asennuksen jälkeen komennolla **sudo systemctl status neofetch**, eikä service ollut. Mietinkin, että
+luoko kyseinen asennuspaketti servicea? 
+----------
+          ID: neofetch
+    Function: pkg.installed
+      Result: True
+     Comment: All specified packages are already installed
+     Started: 16:22:20.948399
+    Duration: 854.556 ms
+     Changes:   
+----------
+          ID: /etc/neofetch/config.conf
+    Function: file.managed
+      Result: True
+     Comment: File /etc/neofetch/config.conf is in the correct state
+     Started: 16:22:21.805648
+    Duration: 14.822 ms
+     Changes:
+----------
+          ID: neofetch.service
+    Function: service.running
+        Name: neofetch
+      Result: False
+     Comment: The named service neofetch is not available
+     Started: 15:51:20.662875
+    Duration: 19.941 ms
+     Changes: 
+
+Muuten muutokset onnistuivat ja testasin ohjelmaa komennolla:
+    neofetch
+Vastauksena tuli tälläinen:
+            .-/+oossssoo+/-.               janni@janni-VirtualBox 
+        `:+ssssssssssssssssss+:`           ---------------------- 
+      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 18.04.4 LTS x86_64 
+    .ossssssssssssssssssdMMMNysssso.       Host: VirtualBox 1.2 
+   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 5.3.0-46-generic 
+  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 3 hours, 16 mins 
+ /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 1721 
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: bash 4.4.20 
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 800x600 
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: Xfce 
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Xfwm4 
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Greybird 
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Greybird [GTK2/3] 
+ /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Elementary-xfce-darker [GTK2/3] 
+  +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: xfce4-terminal 
+   /ssssssssssshdmNNNNmyNMMMMhssssss/      Terminal Font: Monospace 12 
+    .ossssssssssssssssssdMMMNysssso.       CPU: AMD Ryzen 5 2500U with Radeon Vega Mobile Gfx (1) @ 1.996GHz 
+      -+sssssssssssssssssyyyssss+-         GPU: VMware SVGA II Adapter 
+        `:+ssssssssssssssssss+:`           Memory: 1025MiB / 1987MiB 
+            .-/+oossssoo+/-.               GPU Driver: vmwgfx, vmwgfx 
+
+                                                                   
+
+Lopetin tehtävien tekemisen 19.4.2020 klo 16.20 ja aikaa meni yhteensä 3 tuntia.
+
+###Lähteet:
+
+Publish Your Project With GitHub
+http://terokarvinen.com/2016/publish-your-project-with-github
+   
