@@ -135,7 +135,7 @@ neofetchservice:
       - file: /etc/neofetch/config.conf 
 
 Tallensin tilan ja testasin sen läpi menevyyttä komennolla:
-    sudo salt '*' state.apply neofetch
+      sudo salt '*' state.apply neofetch
 
 Kaikki muut toiminnot menivät läpi, mutta service.running ei. En saanut sitä toimimaan. Yritin etsiä -tilasta kirjoitusvirheitä ja saada sitä toimimaan. Testasin myös, että toimivatko vanhat tilani edelleen. Apache toimi normaalisti. Asensin neofetchin vielä käsin toiselle virtuaalikoneelle, jossa sitä ei ole ollut ja testasin asennuksen jälkeen komennolla *sudo systemctl status neofetch*, eikä service ollut. Mietinkin, että luoko kyseinen ohjelma service toimintaa ollenkaan?
 
@@ -165,12 +165,15 @@ Kaikki muut toiminnot menivät läpi, mutta service.running ei. En saanut sitä 
      Changes: 
 
 Muuten muutokset onnistuivat ja testasin ohjelmaa komennolla:
-    neofetch
+    *neofetch*
 Vastauksena tuli tälläinen:
-            .-/+oossssoo+/-.               janni@janni-VirtualBox 
-        `:+ssssssssssssssssss+:`           ---------------------- 
-      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 18.04.4 LTS x86_64 
-    .ossssssssssssssssssdMMMNysssso.       Host: VirtualBox 1.2 
+
+
+
+​            .-/+oossssoo+/-.               janni@janni-VirtualBox 
+​        `:+ssssssssssssssssss+:`           ---------------------- 
+​      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 18.04.4 LTS x86_64 
+​    .ossssssssssssssssssdMMMNysssso.       Host: VirtualBox 1.2 
    /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 5.3.0-46-generic 
   +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 3 hours, 16 mins 
  /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 1721 
@@ -183,14 +186,14 @@ ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Xfwm4
  /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Elementary-xfce-darker [GTK2/3] 
   +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: xfce4-terminal 
    /ssssssssssshdmNNNNmyNMMMMhssssss/      Terminal Font: Monospace 12 
-    .ossssssssssssssssssdMMMNysssso.       CPU: AMD Ryzen 5 2500U with Radeon Vega Mobile Gfx (1) @ 1.996GHz 
-      -+sssssssssssssssssyyyssss+-         GPU: VMware SVGA II Adapter 
-        `:+ssssssssssssssssss+:`           Memory: 1025MiB / 1987MiB 
-            .-/+oossssoo+/-.               GPU Driver: vmwgfx, vmwgfx 
+​    .ossssssssssssssssssdMMMNysssso.       CPU: AMD Ryzen 5 2500U with Radeon Vega Mobile Gfx (1) @ 1.996GHz 
+​      -+sssssssssssssssssyyyssss+-         GPU: VMware SVGA II Adapter 
+​        `:+ssssssssssssssssss+:`           Memory: 1025MiB / 1987MiB 
+​            .-/+oossssoo+/-.               GPU Driver: vmwgfx, vmwgfx 
 
 ​                                                                   
 
-Lopetin tehtävien tekemisen 19.4.2020 klo 16.20 ja aikaa meni yhteensä 3 tuntia.
+Lopetin tehtävien tekemisen 19.4.2020 klo 16.45 ja aikaa meni yhteensä 3,5 tuntia.
 
 **Lähteet:**
 
